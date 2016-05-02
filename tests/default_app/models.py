@@ -21,6 +21,9 @@ class Item(models.Model):
     description = models.TextField()
 
 
+#
+# From demo in documentation
+#
 class BaseParent(models.Model):
     # minimal base implementation ...
     class Meta:
@@ -47,3 +50,33 @@ class Child(BaseChild):
 
     class Meta:
         swappable = swapper.swappable_setting('default_app', 'Child')
+
+
+#
+# Many-to-many example
+#
+class BaseCustomer(models.Model):
+    name = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class Customer(BaseCustomer):
+
+    class Meta:
+        swappable = swapper.swappable_setting("default_app", "Customer")
+
+
+class BaseAccount(models.Model):
+    customers = models.ManyToManyField(swapper.get_model_name('default_app', 'Customer'))
+
+    class Meta:
+        abstract = True
+
+
+class Account(BaseAccount):
+    label = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        swappable = swapper.swappable_setting("default_app", "Account")
